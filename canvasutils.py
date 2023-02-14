@@ -109,7 +109,7 @@ def getCoordsOfIcon(canvas,name):
         x = objectCoords[0]
         y = objectCoords[1]
     else:
-        print("getCoordsOfIcon:",name)
+        #print("getCoordsOfIcon:",name)
         x = 0
         y = 0
     return int(x), int(y)

@@ -45,7 +45,7 @@ def setMenus(ws1):
     network.add_command(label="New")
     network.add_command(label="Edit")
     network.add_command(label="Remove")
-    network.add_command(label="Show list")
+    network.add_command(label="Show catalog")
     menubar.add_cascade(label="Network", menu=network)
 
     help = Menu(menubar, tearoff=0)

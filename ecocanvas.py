@@ -18,7 +18,6 @@ class Ecocanvas:
         self.ecosystemLinks = ecosystemLinks
 
     def addCompanionToEcosystem(self,companionName):
-        print("new node:" + companionName)
         # Get node based on name
         mynode = sqlcplants.getNodeByName(companionName)
         # Get position in ecosystem based on NodeId
@@ -134,7 +133,7 @@ class Ecocanvas:
             name1 = data[primary]["name"]
             name2 = data[companion]["name"]
             if strenght>0: color = "mediumseagreen"
-            else: color = "salmon"
+            else: color = "indianred"
             canvasutils.square(x+xoffset, y, "white", side, self.canvas)
             canvasutils.pinImage(name1, x+xoffset, y, side, self.canvas, role="link")
             canvasutils.square(x + side+xoffset, y, color, side, self.canvas)

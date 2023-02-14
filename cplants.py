@@ -13,6 +13,7 @@ import recommendations
 ecosystem = []
 ecosystemLinks = []
 item = 0
+moved = bool(False)
 
 def framewin():
 
@@ -51,7 +52,6 @@ def framewin():
 
     comp = compcanvas.Compcanvas(canvas)
     eco = ecocanvas.Ecocanvas(canvas2)
-    #eco.set(ecosystem,ecosystemLinks)
     eco.set([],[])
 
     currentcanvas = canvas
@@ -65,12 +65,14 @@ def framewin():
         if companion != "All":
             ecosystem, ecosystemLinks = eco.addCompanionToEcosystem(companion)
             refreshCanvas2()
+        #refreshCanvas()
 
     def removeCurrentCompanionFromEcosystem():
         global ecosystem
         global ecosystemLinks
         ecosystem, ecosystemLinks = eco.removeCompanionFromEcosystem(combo1.get())
         refreshCanvas2()
+        #refreshCanvas()
 
     def saveEcosystem():
         ecoName = eco.saveEcosystem(combo2.get())
@@ -91,8 +93,17 @@ def framewin():
 
     def refreshCanvas(): # Reload all or species companions into canvas
         canvas.delete("all")
-        canvas.yview_moveto(0)
-        numspecies = comp.refreshSpecies(combo1.get())
+        #canvas.yview_moveto(0)
+        global ecosystem
+        nodeIdsList = []
+        for node in ecosystem:
+            nodeIdsList.append(node.id)
+        #print("nodeIdsList:", nodeIdsList)
+        if len(nodeIdsList) > 0:
+            relations = recommendations.getEcosystemCompanionsHash(nodeIdsList)
+        else: relations = {}
+            #print("relations:",relations)
+        numspecies = comp.refreshSpecies(combo1.get(),relations)
         #print("Num. especies:",numspecies)
         canvas.configure(scrollregion=canvas.bbox("all"))
 
@@ -109,6 +120,7 @@ def framewin():
         global ecosystem, ecosystemLinks
         ecosystem, ecosystemLinks = eco.loadEcosystemByName(combo2.get())
         refreshCanvas2()
+        refreshCanvas()
 
     def addSpeciesToCatalog():
         dialogonode.open_dialog()
@@ -142,6 +154,16 @@ def framewin():
             recommendations_list = recommendations.getRecommendationsList(nodeIdsList)
             canvas.delete("all")
             comp.loadNodeNamesList(recommendations_list)
+            canvas.configure(scrollregion=canvas.bbox("all"))
+
+    def showThreats():
+        nodeIdsList = []
+        for node in ecosystem:
+            nodeIdsList.append(node.id)
+        if len(nodeIdsList)>0:
+            threats_list = recommendations.getRecommendationsList(nodeIdsList, type="negative")
+            canvas.delete("all")
+            comp.loadNodeNamesList(threats_list, color="indianred")
             canvas.configure(scrollregion=canvas.bbox("all"))
 
     def moveIcons():
@@ -207,13 +229,17 @@ def framewin():
     button_recommend = Button(top_frame, text="Show recommendations", width=20, height=1, bd='2', command= showRecommendations)
     button_recommend.grid(column=9, row=0)
 
+    # Button "Show Threats"
+    button_threat = Button(top_frame, text="Show threats", width=15, height=1, bd='2', command= showThreats)
+    button_threat.grid(column=10, row=0)
+
     # Button "Move"
     button_move = Button(top_frame, text="Move Eco", width=12, height=1, bd='2', command= moveIcons)
-    button_move.grid(column=10, row=0)
+    button_move.grid(column=11, row=0)
 
     # Button "Edit link"
     button_move = Button(top_frame, text="Link", width=12, height=1, bd='2', command= linkPopUp)
-    button_move.grid(column=11, row=0)
+    button_move.grid(column=12, row=0)
     linkPopUp
 
     ########### Binding functions for canvases #################################:
@@ -264,6 +290,7 @@ def framewin():
         global item
         if event.y < eco.getEcoDrawingHeight():
             item =  canvas2.find_closest(event.x, event.y)[0]
+                #pick_image(event, canvas2)
             canvas2.tag_raise(item)
         else: item = 0
 
@@ -273,13 +300,13 @@ def framewin():
         global item
         moved = bool(True)
         if item>0:
-            print("item in move_image:",item)
-            item =  canvas2.find_closest(event.x, event.y)[0] #OJO
+            #print("item in move_image:",item)
+            #item = canvas2.find_closest(event.x, event.y)[0] #OJO
+            #pick_image(event, canvas2)
             x, y = canvas2.coords(item)
             x1, y1 = canvasutils.limitCoordinates(event.x, event.y, canvas2)
             name = canvasutils.getImageLabel(canvas2, item)
             canvasutils.moveImage(name, x1-x, y1-y, canvas2)
-            #canvas2.move(item, x1-x, y1-y)
             eco.refreshLinks(eco.getIconHash())
 
     def on_release_button(event): # Release icon in ecosystem
@@ -303,6 +330,7 @@ def framewin():
            global ecosystemLinks
            ecosystem, ecosystemLinks = eco.addCompanionToEcosystem(companionName)
         refreshCanvas2()
+        refreshCanvas()
 
     def right_click_canvas2(event): # Remove from ecosystem
         global item
@@ -315,6 +343,7 @@ def framewin():
             companionName = canvasutils.getImageLabel(canvas2,item)
             ecosystem, ecosystemLinks = eco.removeCompanionFromEcosystem(companionName)
         refreshCanvas2()
+        refreshCanvas()
 
     def scrollCanvas(event):
         global currentcanvas

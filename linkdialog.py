@@ -12,6 +12,9 @@ def dialog():
         if linkId.id > 0:
             strength_entry.set(linkId.strength)
             description_entry.set(linkId.description)
+        else:
+            strength_entry.set("")
+            description_entry.set("")
 
     def select_primary_combo(event):
         primary_name = primary_combo.get()
