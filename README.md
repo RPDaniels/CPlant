@@ -20,3 +20,5 @@ The ecosystem network images can be moved with the mouse, so the network image c
 
 The main file is cplants.py
 
+If you want to use it as a Windows executable file, you can download it from <a href="https://drive.google.com/drive/folders/1F1bidC26IPDtMy7XihU498Eys028yHLF?usp=sharing">here</a>
+
