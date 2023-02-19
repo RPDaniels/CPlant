@@ -24,9 +24,9 @@ def framewin():
     #canvasWidth = screen_width
 
     ############# Window Layout: Top frame + bottom left frame + canvas + bottom right frame + canvas2:
-    root.title("CPlants creación de ecosistema")
+    root.title("CPlants Ecosystem creation")
     root.state('zoomed')
-    root.config(menu=menuapp.setMenus(root))
+    #root.config(menu=menuapp.setMenus(root))
 
     # Frame for comboboxes
     top_frame = Frame(root)
@@ -198,12 +198,12 @@ def framewin():
     combo2.bind("<<ComboboxSelected>>", select_combo2)
 
     # Button "Add->"
-    btn1 = Button(top_frame, text='Add to Eco->', width=12, height=1, bd='2', command=addCurrentCompanionToEcosystem)
-    btn1.grid(column=1, row=0)
+    #btn1 = Button(top_frame, text='Add to Eco->', width=12, height=1, bd='2', command=addCurrentCompanionToEcosystem)
+    #btn1.grid(column=1, row=0)
 
     # Button "<-Remove"
-    btn2 = Button(top_frame, text='<-Remove from Eco', width=16, height=1, bd='2', command=removeCurrentCompanionFromEcosystem)
-    btn2.grid(column=2, row=0)
+    #btn2 = Button(top_frame, text='<-Remove from Eco', width=16, height=1, bd='2', command=removeCurrentCompanionFromEcosystem)
+    #btn2.grid(column=2, row=0)
 
     # Button "Save"
     btn3 = Button(top_frame, text='Save Eco', width=10, height=1, bd='2', command=saveEcosystem)
