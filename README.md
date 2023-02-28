@@ -1,4 +1,5 @@
 # CPlant
+<i>(Para versión en español haz clic <a href="LEEME.md">aquí</a>)</i><br>
 A visualizer of companion plants relationships made with Python and SQLite
 
 ![cplants1](https://user-images.githubusercontent.com/49267590/219956809-1fc463ea-96c7-4a7e-834d-488de6ff08bc.png)
