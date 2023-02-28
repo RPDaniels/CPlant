@@ -21,5 +21,7 @@ Las imágenes del ecosistema se pueden mover con el ratón, por lo que la imagen
 
 El archivo principal es cplants.py
 
-Si desea utilizarlo como archivo ejecutable de Windows, puede descargarlo desde <a href="https://drive.google.com/drive/folders/1F1bidC26IPDtMy7XihU498Eys028yHLF?usp=sharing">aquí</a>
+Si desea utilizarlo como archivo ejecutable de Windows, puede descargarlo desde <a href="https://drive.google.com/file/d/1jrgm7hE0JfRPK0vfg9yJXSKhhPT9JESI/view?usp=share_link">aquí</a>
+
+
 
