@@ -15,20 +15,25 @@ def on_submit():
     data = [padre, tipo, nombre, nombre_latin, nombre_español]
     if all(data):
         sqlcplants.savenode(data)
-        messagebox.showinfo("Datos introducidos", f"Nombre: {nombre}\nNombre latin: {nombre_latin}\nNombre español: {nombre_español}\nPadre: {padre}\nTipo: {tipo}")
+        messagebox.showinfo(l.get("Data introduced"),
+            f"{l.get('Name')}: {nombre}\n"
+            f"{l.get('Latin name')}: {nombre_latin}\n"
+            f"{l.get('Spanish name')}: {nombre_español}\n"
+            f"{l.get('Parent')}: {padre}\n"
+            f"{l.get('Type')}: {tipo}")
         dialog.destroy()
         # Actualizar combo1 y refrescar
     else:
-        messagebox.showinfo("Error al introducir datos","Por favor, completa todos los datos")
+        messagebox.showinfo(l.get("Error introducing data"),l.get("Please fill in all data"))
 
 def on_delete():
     name = nombre_entry.get()
     isDeleted = False
-    confirmation = messagebox.askyesno("Delete plant?", "You are going to delete plant " + name)
+    confirmation = messagebox.askyesno(l.get("Delete plant?"), l.get("You are going to delete plant")+" " + name)
     if confirmation:
         sqlcplants.deletenode(name)
         isDeleted = True
-        messagebox.showinfo("Deleting plant","Plant deleted: "+ name)
+        messagebox.showinfo(l.get("Deleting plant"),l.get("Plant deleted")+": "+ name)
     dialog.destroy()
     return isDeleted
 
@@ -41,7 +46,9 @@ def getPlantDataByName(name):
     type = nodeObject.type
     return latin, esp, parent, type
 
-def open_edit_dialog(name):
+def open_edit_dialog(lang,name):
+    global l
+    l = lang
     if len(name)>0:
         latin, esp, parent, type = getPlantDataByName(name)
         data = nodeDialog(name, latin, esp, parent, type)
@@ -49,7 +56,9 @@ def open_edit_dialog(name):
         data = open_dialog()
     return data
 
-def open_dialog():
+def open_dialog(lang):
+    global l
+    l = lang
     data = nodeDialog("","","","","")
     return data
 
@@ -58,7 +67,7 @@ def open_dialog():
 def nodeDialog(name, latin, esp, parent, type):
     global dialog
     dialog = Toplevel()
-    dialog.title("Plant")
+    dialog.title(l.get("Plant"))
 
     dialog.update()
     x = (dialog.winfo_screenwidth() - dialog.winfo_reqwidth()) / 2
@@ -77,7 +86,7 @@ def nodeDialog(name, latin, esp, parent, type):
         #.place(relx=0.5, rely=0.5, anchor="center")
 
     #----------------
-    nombre_label = Label(dialog, text="Name:")
+    nombre_label = Label(dialog, text=l.get("Name")+":")
     nombre_label.grid(row=1, column=0, sticky="w")
 
     global nombre_entry
@@ -86,7 +95,7 @@ def nodeDialog(name, latin, esp, parent, type):
     nombre_entry.grid(row=1, column=1, sticky="w")
 
     # -------------
-    nombre_latin_label = Label(dialog, text="Latin name:")
+    nombre_latin_label = Label(dialog, text=l.get("Latin name")+":")
     nombre_latin_label.grid(row=2, column=0, sticky="w")
 
     global nombre_latin_entry
@@ -96,7 +105,7 @@ def nodeDialog(name, latin, esp, parent, type):
 
 
     # -------------
-    nombre_español_label = Label(dialog, text="Spanish name:")
+    nombre_español_label = Label(dialog, text=l.get("Spanish name")+":")
     nombre_español_label.grid(row=3, column=0, sticky="w")
 
     global nombre_español_entry
@@ -105,7 +114,7 @@ def nodeDialog(name, latin, esp, parent, type):
     nombre_español_entry.grid(row=3, column=1, sticky="w")
 
     # -------------
-    padre_label = Label(dialog, text="Parent:")
+    padre_label = Label(dialog, text=l.get("Parent")+":")
     padre_label.grid(row=4, column=0, sticky="w")
 
     global padre_entry
@@ -126,11 +135,11 @@ def nodeDialog(name, latin, esp, parent, type):
 
     # -------------
 
-    submit_button = Button(dialog, text="Save", command=on_submit)
+    submit_button = Button(dialog, text=l.get("Save"), command=on_submit)
     submit_button.grid(row=6, column=0, pady=10)
-    submit_button = Button(dialog, text="Delete", command=on_delete)
+    submit_button = Button(dialog, text=l.get("Delete"), command=on_delete)
     submit_button.grid(row=6, column=1, pady=10)
-    cancel_button = Button(dialog, text="Cancel", command=dialog.destroy)
+    cancel_button = Button(dialog, text=l.get("Cancel"), command=dialog.destroy)
     cancel_button.grid(row=6, column=2, pady=10)
 
 

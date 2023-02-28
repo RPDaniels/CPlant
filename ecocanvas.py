@@ -8,10 +8,11 @@ import sqlcplants
 import canvasutils
 
 class Ecocanvas:
-    def __init__(self, mycanvas):
+    def __init__(self,lang, mycanvas):
         self.canvas = mycanvas
         self.squareside = 100
         self.radius = 100
+        self.l = lang
 
     def set(self,ecosystem,ecosystemLinks):
         self.ecosystem = ecosystem
@@ -42,7 +43,7 @@ class Ecocanvas:
         i = 0
         for node in self.ecosystem:
             x, y = self.getItemCoordinatesInCircle(i) # Gets position in the circle
-            canvasutils.pinImage(node.name, x, y, self.squareside, self.canvas)
+            canvasutils.pinImage(self.l,node.name, x, y, self.squareside, self.canvas)
             i += 1
         for link in self.ecosystemLinks:
             self.drawLink(link)
@@ -135,9 +136,9 @@ class Ecocanvas:
             if strenght>0: color = "mediumseagreen"
             else: color = "indianred"
             canvasutils.square(x+xoffset, y, "white", side, self.canvas)
-            canvasutils.pinImage(name1, x+xoffset, y, side, self.canvas, role="link")
+            canvasutils.pinImage(self.l,name1, x+xoffset, y, side, self.canvas, role="link")
             canvasutils.square(x + side+xoffset, y, color, side, self.canvas)
-            canvasutils.pinImage(name2, x+side+xoffset, y, side, self.canvas, role="link")
+            canvasutils.pinImage(self.l,name2, x+side+xoffset, y, side, self.canvas, role="link")
             canvasutils.rect(x+side*1.5+xoffset+1, y-side/2+2, side-2, side*2-1, self.canvas)
             #self.canvas.create_rectangle(x+side*2+xoffset, y, x+side*2+xoffset + descriptionwidth, y + side)
             descriptionList = canvasutils.getSplittedList(description,30)
@@ -173,13 +174,13 @@ class Ecocanvas:
         return self.ecosystem, self.ecosystemLinks
 
     def saveEcosystem(self,defaultname): # Saves current ecosystem into the database
-        ecoName = simpledialog.askstring("Save ecosystem", "Enter an ecosystem name to save:", initialvalue=defaultname)
+        ecoName = simpledialog.askstring(self.l.get("Save ecosystem"), self.l.get("Enter an ecosystem name to save:"), initialvalue=defaultname)
         if ecoName != None:
             sqlcplants.saveEcosystem(ecoName,self.ecosystem)
         return ecoName
 
     def deleteEcosystem(self,ecoName): # Deletes ecosystem from the database
-        confirmation = messagebox.askyesno("Delete ecosystem","You are going to delete ecosystem "+ecoName)
+        confirmation = messagebox.askyesno(self.l.get("Delete ecosystem"),self.l.get("You are going to delete ecosystem")+" "+ecoName)
         if confirmation:
             sqlcplants.removeEcosystem(ecoName)
             self.ecosystem = []
@@ -188,7 +189,7 @@ class Ecocanvas:
 
     def getecosystemcombolist(self): #Gets a list of names of the ecosystems stored in database
         ecosystemList = sqlcplants.getEcosystemsList()
-        ecosystemList.insert(0, "(Select a ecosystem)")
+        ecosystemList.insert(0, self.l.get("(Select a ecosystem)"))
         return tuple(ecosystemList)
 
 

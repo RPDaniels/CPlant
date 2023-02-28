@@ -31,7 +31,7 @@ def moveImage(name, xAmount, yAmount, mycanvas):
         mycanvas.move(tagname, x, y)
     return x,y
 
-def pinImage(name, x, y, side, mycanvas, role="node"):
+def pinImage(l, name, x, y, side, mycanvas, role="node"):
     # print(name)
     tagname = name.replace(' ','_')
     '''
@@ -60,7 +60,9 @@ def pinImage(name, x, y, side, mycanvas, role="node"):
     imgX = mycanvas.create_image(int(x), int(y), anchor=CENTER, image=imgtk2, tag=(tagname,"icon"))
 
     # print(canvas.coords(name))
-    chunks = name.split(' ')
+    name2display = l.get(name)
+    chunks = getSplittedList(name2display, 15)
+    #chunks = name2display.split(' ') #************
     yline = y
     fontsize = int(side /10)
     myFont = 'Helvetica ' + str(fontsize)

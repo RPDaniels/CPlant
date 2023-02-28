@@ -1,0 +1,48 @@
+CPlants Ecosystem creation;CPlant creación de ecosistemas
+All;Todos
+(Select a ecosystem);(Selecciona ecosistema)
+Save Eco;Guardar Eco
+Delete Eco;Borrar Eco
+New plant;Nueva planta
+Edit plant;Editar Planta
+Show catalog;Ver catálogo
+Show recommendations;Ver recomendaciones
+Show threats;Ver amenazas
+Move Eco;Mover Eco
+Link;Enlace
+Data introduced;Datos introducidos
+Name;Nombre
+Latin name;Nombre latin
+Spanish name;Nombre español
+Parent;Padre
+Type;Tipo
+Error introducing data;Error al introducir datos
+Please fill in all data;Por favor, completa todos los datos
+Delete plant?;¿Borrar planta?
+You are going to delete plant;Vas a borrar la planta
+Deleting plant;Borrando planta
+Plant deleted;Planta borrada
+Plant;Planta
+Species;Especie
+Save;Guardar
+Delete;Borrar
+Cancel;Cancelar
+Primary;Primaria
+Companion;Compañera
+Strength;Fuerza
+Description;Descripción
+Delete link?;¿Borrar enlace?
+You are going to delete the link between primary:;Vas a borrar el enlace entre la primaria:
+and companion:;y la compañera:
+Link deleted;Enlace borrado
+Link deleted between:;Enlace borrado entre:
+Edit Link;Editar enlace
+(Select);(Seleccionar)
+Accept;Aceptar
+Delete link;Borrar enlace
+Save ecosystem;Guardar ecosistema
+Enter an ecosystem name to save:;Introduce un nombre de ecosistema para guardar
+Delete ecosystem;Borrar ecosistema
+You are going to delete ecosystem;Vas a borrar el ecosistema
+is affected by;es afectado por
+affects;afecta a

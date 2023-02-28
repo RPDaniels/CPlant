@@ -9,11 +9,13 @@ import dialogonode
 import linkdialog
 import menuapp
 import recommendations
+from langmgr import Language
 
 ecosystem = []
 ecosystemLinks = []
 item = 0
 moved = bool(False)
+l = Language("en") #For spanish version, set to "es" and use spanish db CPlants.db in sqlcplants.py
 
 def framewin():
 
@@ -24,7 +26,7 @@ def framewin():
     #canvasWidth = screen_width
 
     ############# Window Layout: Top frame + bottom left frame + canvas + bottom right frame + canvas2:
-    root.title("CPlants Ecosystem creation")
+    root.title(l.get("CPlants Ecosystem creation"))
     root.state('zoomed')
     #root.config(menu=menuapp.setMenus(root))
 
@@ -50,8 +52,8 @@ def framewin():
     canvas2.pack(fill="both", expand=True)
     right_frame.pack(side="right", fill="both", expand=True)
 
-    comp = compcanvas.Compcanvas(canvas)
-    eco = ecocanvas.Ecocanvas(canvas2)
+    comp = compcanvas.Compcanvas(l,canvas)
+    eco = ecocanvas.Ecocanvas(l,canvas2)
     eco.set([],[])
 
     currentcanvas = canvas
@@ -62,7 +64,7 @@ def framewin():
         global ecosystem
         global ecosystemLinks
         companion = combo1.get()
-        if companion != "All":
+        if companion != l.get("All"):
             ecosystem, ecosystemLinks = eco.addCompanionToEcosystem(companion)
             refreshCanvas2()
         #refreshCanvas()
@@ -100,10 +102,13 @@ def framewin():
             nodeIdsList.append(node.id)
         #print("nodeIdsList:", nodeIdsList)
         if len(nodeIdsList) > 0:
-            relations = recommendations.getEcosystemCompanionsHash(nodeIdsList)
+            relations = recommendations.getEcosystemCompanionsHash(l,nodeIdsList)
         else: relations = {}
             #print("relations:",relations)
-        numspecies = comp.refreshSpecies(combo1.get(),relations)
+        plantname = combo1.get()
+        if l.lang == "es":
+            plantname = l.rget(plantname)
+        numspecies = comp.refreshSpecies(plantname,relations)
         #print("Num. especies:",numspecies)
         canvas.configure(scrollregion=canvas.bbox("all"))
 
@@ -123,10 +128,10 @@ def framewin():
         refreshCanvas()
 
     def addSpeciesToCatalog():
-        dialogonode.open_dialog()
+        dialogonode.open_dialog(l)
         root.wait_window(dialogonode.dialog)
-        speciesList = sqlcplants.getSpeciesList()
-        speciesList.insert(0, "All")
+        speciesList = sqlcplants.getSpeciesList(l)
+        speciesList.insert(0, l.get("All"))
         #print(speciesList)
         combo1['values'] = tuple(speciesList)
         #combo1.current(0)  # set All
@@ -134,10 +139,12 @@ def framewin():
 
     def editNode():
         companion = combo1.get()
-        dialogonode.open_edit_dialog(companion)
+        if l.lang == "es":
+            companion = l.rget(companion)
+        dialogonode.open_edit_dialog(l,companion)
         root.wait_window(dialogonode.dialog)
-        speciesList = sqlcplants.getSpeciesList()
-        speciesList.insert(0, "All")
+        speciesList = sqlcplants.getSpeciesList(l)
+        speciesList.insert(0, l.get("All"))
         combo1['values'] = tuple(speciesList)
         refreshCanvas()
 
@@ -151,7 +158,7 @@ def framewin():
         for node in ecosystem:
             nodeIdsList.append(node.id)
         if len(nodeIdsList)>0:
-            recommendations_list = recommendations.getRecommendationsList(nodeIdsList)
+            recommendations_list = recommendations.getRecommendationsList(l,nodeIdsList)
             canvas.delete("all")
             comp.loadNodeNamesList(recommendations_list)
             canvas.configure(scrollregion=canvas.bbox("all"))
@@ -161,7 +168,7 @@ def framewin():
         for node in ecosystem:
             nodeIdsList.append(node.id)
         if len(nodeIdsList)>0:
-            threats_list = recommendations.getRecommendationsList(nodeIdsList, type="negative")
+            threats_list = recommendations.getRecommendationsList(l,nodeIdsList, type="negative")
             canvas.delete("all")
             comp.loadNodeNamesList(threats_list, color="indianred")
             canvas.configure(scrollregion=canvas.bbox("all"))
@@ -174,14 +181,14 @@ def framewin():
         #balance.moveIcons(ecosystemLinks, canvas2)
 
     def linkPopUp():
-        linkdialog.dialog()
+        linkdialog.dialog(l)
 
     ########### Top frame layout: ###########################################################
 
     # Combo with list of plants
     combo1 = Combobox(top_frame)
-    speciesList = sqlcplants.getSpeciesList()
-    speciesList.insert(0,"All")
+    speciesList = sqlcplants.getSpeciesList(l)
+    speciesList.insert(0,l.get("All"))
     combo1['values'] = tuple(speciesList)
     combo1.current(0)  # set the selected item
     combo1.grid(column=0, row=0)
@@ -189,7 +196,7 @@ def framewin():
     # Combo with list of ecosystems
     combo2 = Combobox(top_frame)
     ecosystemList = sqlcplants.getEcosystemsList()
-    ecosystemList.insert(0,"(Select a ecosystem)")
+    ecosystemList.insert(0,l.get("(Select a ecosystem)"))
     combo2['values'] = tuple(ecosystemList)
     combo2.current(0)  # set the selected item
     combo2.grid(column=3, row=0)
@@ -206,39 +213,39 @@ def framewin():
     #btn2.grid(column=2, row=0)
 
     # Button "Save"
-    btn3 = Button(top_frame, text='Save Eco', width=10, height=1, bd='2', command=saveEcosystem)
+    btn3 = Button(top_frame, text=l.get('Save Eco'), width=10, height=1, bd='2', command=saveEcosystem)
     btn3.grid(column=4, row=0)
 
     # Button "Delete"
-    btn4 = Button(top_frame, text='Delete Eco', width=10, height=1, bd='2', command=deleteEcosystem)
+    btn4 = Button(top_frame, text=l.get('Delete Eco'), width=10, height=1, bd='2', command=deleteEcosystem)
     btn4.grid(column=5, row=0)
 
     # Button "New Plant"
-    button_newnode = Button(top_frame, text="New plant", width=10, height=1, bd='2', command= addSpeciesToCatalog)
+    button_newnode = Button(top_frame, text=l.get("New plant"), width=10, height=1, bd='2', command= addSpeciesToCatalog)
     button_newnode.grid(column=6, row=0)
 
     # Button "Edit plant"
-    button_move = Button(top_frame, text="Edit plant", width=12, height=1, bd='2', command= editNode)
+    button_move = Button(top_frame, text=l.get("Edit plant"), width=12, height=1, bd='2', command= editNode)
     button_move.grid(column=7, row=0)
 
     # Button "Show catalog"
-    button_allnodes = Button(top_frame, text="Show catalog", width=13, height=1, bd='2', command= showAllCatalog)
+    button_allnodes = Button(top_frame, text=l.get("Show catalog"), width=13, height=1, bd='2', command= showAllCatalog)
     button_allnodes.grid(column=8, row=0)
 
     # Button "Show recommendations"
-    button_recommend = Button(top_frame, text="Show recommendations", width=20, height=1, bd='2', command= showRecommendations)
+    button_recommend = Button(top_frame, text=l.get("Show recommendations"), width=20, height=1, bd='2', command= showRecommendations)
     button_recommend.grid(column=9, row=0)
 
     # Button "Show Threats"
-    button_threat = Button(top_frame, text="Show threats", width=15, height=1, bd='2', command= showThreats)
+    button_threat = Button(top_frame, text=l.get("Show threats"), width=15, height=1, bd='2', command= showThreats)
     button_threat.grid(column=10, row=0)
 
     # Button "Move"
-    button_move = Button(top_frame, text="Move Eco", width=12, height=1, bd='2', command= moveIcons)
+    button_move = Button(top_frame, text=l.get("Move Eco"), width=12, height=1, bd='2', command= moveIcons)
     button_move.grid(column=11, row=0)
 
     # Button "Edit link"
-    button_move = Button(top_frame, text="Link", width=12, height=1, bd='2', command= linkPopUp)
+    button_move = Button(top_frame, text=l.get("Link"), width=12, height=1, bd='2', command= linkPopUp)
     button_move.grid(column=12, row=0)
     linkPopUp
 
@@ -256,6 +263,8 @@ def framewin():
         global currentcanvas
         item = pick_image(event, currentcanvas)
         companionName = canvasutils.getImageLabel(currentcanvas, item)
+        if l.lang=="es":
+            companionName = l.get(companionName)
         if companionName in combo1['values']:
             combo1.set(companionName)  # Actualizar el combo para cargar la especie clicada
             refreshCanvas()

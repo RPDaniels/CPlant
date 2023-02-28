@@ -3,19 +3,20 @@ import canvasutils
 
 class Compcanvas:
 
-    def __init__(self, mycanvas):
+    def __init__(self, lang, mycanvas):
         self.canvas = mycanvas
         self.squareside = 100
         self.maxcolumns = 10 #int((self.canvas.winfo_screenwidth() / 2) / self.squareside) +1
         self.allspecies = []
+        self.l = lang
 
     def refreshAndShowAll(self):
-        self.allspecies = sqlcplants.getSpeciesList() #.getAllSpecies()
+        self.allspecies = sqlcplants.getSpeciesList(self.l) #.getAllSpecies()
         self.showAll()
 
     def showAll(self, relations={}):
         if len(self.allspecies)==0: # Load for the first time
-            self.allspecies = sqlcplants.getSpeciesList() #.getAllSpecies()
+            self.allspecies = sqlcplants.getSpeciesList(self.l) #.getAllSpecies()
         self.loadNodeNamesList(self.allspecies, "ghostwhite", relations) ####
         return len(self.allspecies)
 
@@ -43,8 +44,10 @@ class Compcanvas:
                     color = "teal"
             else:
                 color = defaultColor
+            if self.l.lang != "en":
+                name = self.l.rget(name)
             canvasutils.square(x,y,color,self.squareside,self.canvas)
-            canvasutils.pinImage(name, x, y, self.squareside, self.canvas)
+            canvasutils.pinImage(self.l,name, x, y, self.squareside, self.canvas)
             col += 1
             if col == self.maxcolumns + 1:
                col = 1
@@ -62,10 +65,10 @@ class Compcanvas:
             nodeList = sqlcplants.getCompanions(species)
         speciesNode = sqlcplants.getNodeByName(species)
 
-        canvasutils.pinImage(species, int(self.squareside/2), int(row * self.squareside + self.squareside / 2), self.squareside, self.canvas)
+        canvasutils.pinImage(self.l,species, int(self.squareside/2), int(row * self.squareside + self.squareside / 2), self.squareside, self.canvas)
         fontsize = int(self.squareside / 10)
         myFont = 'Helvetica ' + str(fontsize)
-        self.canvas.create_text(int(self.squareside * 2), int(self.squareside * (row+0.5)), text=direction+":",
+        self.canvas.create_text(int(self.squareside * 2), int(self.squareside * (row+0.5)), text=self.l.get(direction)+":",
                                 fill="black", font =myFont)
         col = 1
         row = row + 1
@@ -82,7 +85,7 @@ class Compcanvas:
                 x = col * self.squareside - self.squareside / 2
                 y = row * self.squareside + self.squareside / 2
                 canvasutils.square(x,y,color,self.squareside,self.canvas)
-                canvasutils.pinImage(node.name, x, y, self.squareside, self.canvas)
+                canvasutils.pinImage(self.l, node.name, x, y, self.squareside, self.canvas)
                 col += 1
                 if col == self.maxcolumns + 1:
                     col = 1

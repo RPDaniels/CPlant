@@ -1,9 +1,10 @@
 # import sqlite3
 from sqlite3 import connect
 
+dbname = "CPlants.db"
 
 def select(query):
-    conn = connect('CPlants.db')
+    conn = connect(dbname)
     cursor = conn.execute(query)
     mylist = []
     for record in cursor:
@@ -13,7 +14,7 @@ def select(query):
 
 
 def insert(query):
-    conn = connect('CPlants.db')
+    conn = connect(dbname)
     conn.execute(query)
     conn.commit()
     conn.close()
@@ -67,6 +68,14 @@ def getAllNodes():
     # print(n.id, n.getname())
     return nodelist
 
+def getDictionary():
+    query = "SELECT ND_NAME, ND_NAME_ES from NODE ORDER BY ND_NAME"
+    records = select(query)
+    nodedict = {}
+    for row in records:
+        nodedict[row[0]]= row[1]
+    return nodedict
+
 
 def getnodecount():
     query = "SELECT COUNT() FROM NODE"
@@ -108,9 +117,22 @@ def deletenode(name):
     query_deleteNode = "DELETE FROM NODE WHERE ND_NAME = '" + name + "'"
     insert(query_deleteNode)
 
+def getSpeciesList(l):
+    if l.lang == "es":
+        return getSpeciesList_ES()
+    else:
+        return getSpeciesList_EN()
 
-def getSpeciesList():
+def getSpeciesList_EN():
     query = "SELECT ND_NAME from NODE ORDER BY ND_NAME"
+    records = select(query)
+    namelist = []
+    for row in records:
+        namelist.append(row[0])
+    return namelist
+
+def getSpeciesList_ES():
+    query = "SELECT ND_NAME_ES from NODE ORDER BY ND_NAME_ES"
     records = select(query)
     namelist = []
     for row in records:
@@ -139,13 +161,18 @@ def getNodeByName(name):
     return myNode
 
 
-def getNodeNamesFromIds(idlist, order=True):
+def getNodeNamesFromIds(l,idlist, order=True):
     lista = str(idlist[0])
     for i in range(len(idlist)):
         lista = lista + "," + str(idlist[i])
-    query = "SELECT ND_NAME FROM NODE WHERE ND_ID IN (" + lista + ")"
-    if order:
-        query = query + " ORDER BY ND_NAME"
+    if l.lang =="es":
+        query = "SELECT ND_NAME_ES FROM NODE WHERE ND_ID IN (" + lista + ")"
+        if order:
+            query = query + " ORDER BY ND_NAME_ES"
+    else:
+        query = "SELECT ND_NAME FROM NODE WHERE ND_ID IN (" + lista + ")"
+        if order:
+            query = query + " ORDER BY ND_NAME"
     records = select(query)
     namelist = []
     for row in records:
@@ -347,3 +374,4 @@ def removeEcosystem(ecoName):
     insert(query_removeEcosystem)
     query_removeEcosystem2 = "DELETE FROM ECOSYSTEM WHERE ES_ID = " + ecoId
     insert(query_removeEcosystem2)
+

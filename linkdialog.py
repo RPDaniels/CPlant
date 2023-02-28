@@ -3,9 +3,14 @@ from tkinter import ttk, messagebox
 import sqlcplants
 import canvasutils
 
-def dialog():
+def dialog(lang):
+    global l
+    l=lang
     #global labelImagePrimary
     def update_popup(primary_name, companion_name):
+        if l.lang!="en":
+            primary_name = l.rget(primary_name)
+            companion_name = l.rget(companion_name)
         node_primary = sqlcplants.getNodeByName(primary_name)
         node_companion = sqlcplants.getNodeByName(companion_name)
         linkId = sqlcplants.getLink(node_primary, node_companion)
@@ -19,7 +24,11 @@ def dialog():
     def select_primary_combo(event):
         primary_name = primary_combo.get()
         companion_name = companion_combo.get()
-        image_primary = canvasutils.getImage(primary_name)
+        if l.lang!="en":
+            imagename = l.rget(primary_name)
+        else:
+            imagename = primary_name
+        image_primary = canvasutils.getImage(imagename)
         labelImagePrimary.config(image=image_primary)
         labelImagePrimary.image = image_primary
 
@@ -28,7 +37,11 @@ def dialog():
     def select_companion_combo(event):
         primary_name = primary_combo.get()
         companion_name = companion_combo.get()
-        image_companion = canvasutils.getImage(companion_name)
+        if l.lang!="en":
+            imagename = l.rget(companion_name)
+        else:
+            imagename = companion_name
+        image_companion = canvasutils.getImage(imagename)
         labelImageCompanion.config(image=image_companion)
         labelImageCompanion.image = image_companion
 
@@ -42,11 +55,11 @@ def dialog():
         data = [primary, companion, strength, description]
         if all(data):
             sqlcplants.savelink(data)
-            messagebox.showinfo("Datos introducidos",
-                                f"Primary: {primary}\n"\
-                                f"Companion: {companion}\n"\
-                                f"Strength: {strength}\n"\
-                                f"Description: {description}")
+            messagebox.showinfo(l.get("Datos introducidos",
+                                f"{l.get('Primary')}: {primary}\n"\
+                                f"{l.get('Companion')}: {companion}\n"\
+                                f"{l.get('Strength')}: {strength}\n"\
+                                f"{l.get('Description')}: {description}"))
             dialog.destroy()
 
     def on_cancel():
@@ -55,19 +68,19 @@ def dialog():
     def on_delete():
         primary = primary_combo.get()
         companion = companion_combo.get()
-        confirmation = messagebox.askyesno("Delete link?", "You are going to delete the link between primary: " +
-                                           primary + " and companion: " + companion)
+        confirmation = messagebox.askyesno(l.get("Delete link?"), l.get("You are going to delete the link between primary:") +
+                                           " " + primary + " "+l.get("and companion:")+" " + companion)
         if confirmation:
             sqlcplants.deleteLinkByNodeNames(primary,companion)
-            messagebox.showinfo("Link deleted", f"Link deleted between:\n" \
-                                                f"Primary: {primary}\n" \
-                                                f"Companion: {companion}\n")
+            messagebox.showinfo(l.get("Link deleted"), f"{l.get('Link deleted between:')}\n" \
+                                                f"{l.get('Primary')}: {primary}\n" \
+                                                f"{l.get('Companion')}: {companion}\n")
             dialog.destroy()
 
     #root = tk.Tk()
     #root.title("Pop-up")
     dialog = tk.Toplevel()
-    dialog.title("Edit Link")
+    dialog.title(l.get("Edit Link"))
 
     dialog.update()
     x = (dialog.winfo_screenwidth() - dialog.winfo_reqwidth()) / 2
@@ -75,12 +88,12 @@ def dialog():
     dialog.geometry("+%d+%d" % (x, y))
 
 
-    speciesList = sqlcplants.getSpeciesList()
-    speciesList.insert(0,"(Select)")
+    speciesList = sqlcplants.getSpeciesList(l)
+    speciesList.insert(0,l.get("(Select)"))
     #primary_combo['values'] = tuple(speciesList)
 
     # Create primary combo box
-    nombre_label = tk.Label(dialog, text="Primary:")
+    nombre_label = tk.Label(dialog, text=l.get("Primary")+":")
     nombre_label.grid(row=0, column=0, sticky="w")
 
     primary_combo = ttk.Combobox(dialog, values=tuple(speciesList))
@@ -88,7 +101,7 @@ def dialog():
     primary_combo.grid(row=0, column=1, sticky="w")
 
     # Create companion combo box
-    nombre_label2 = tk.Label(dialog, text="Companion:")
+    nombre_label2 = tk.Label(dialog, text=l.get("Companion")+":")
     nombre_label2.grid(row=1, column=0, sticky="w")
 
     companion_combo = ttk.Combobox(dialog, values=tuple(speciesList))
@@ -96,7 +109,7 @@ def dialog():
     companion_combo.grid(row=1, column=1, sticky="w")
 
     # Create strength entry field
-    nombre_label3 = tk.Label(dialog, text="Strength:")
+    nombre_label3 = tk.Label(dialog, text=l.get("Strength")+":")
     nombre_label3.grid(row=2, column=0, sticky="w")
 
     strength_entry = ttk.Combobox(dialog, values=["-4","-3","-2","-1","","1","2","3","4"])
@@ -122,9 +135,9 @@ def dialog():
 
     # Create description entry field
     linktypeslist = sqlcplants.getLinkTypesDescriptions()
-    linktypeslist.insert(0, "(Select)")
+    linktypeslist.insert(0, l.get("(Select)"))
 
-    nombre_label4 = tk.Label(dialog, text="Description:")
+    nombre_label4 = tk.Label(dialog, text=l.get("Description")+":")
     nombre_label4.grid(row=3, column=0, sticky="w")
 
     description_entry = ttk.Combobox(dialog, width=60, values=tuple(linktypeslist))
@@ -132,13 +145,13 @@ def dialog():
     description_entry.grid(row=3, column=1, sticky="w", columnspan=5)
 
     # Create accept and cancel buttons
-    accept_button = tk.Button(dialog, text="Accept", command=on_accept)
+    accept_button = tk.Button(dialog, text=l.get("Accept"), command=on_accept)
     accept_button.grid(row=4, column=1, sticky="e")
 
-    cancel_button = tk.Button(dialog, text="Cancel", command=on_cancel)
+    cancel_button = tk.Button(dialog, text=l.get("Cancel"), command=on_cancel)
     cancel_button.grid(row=4, column=2, sticky="w")
 
-    delete_button = tk.Button(dialog, text="Delete link", command=on_delete)
+    delete_button = tk.Button(dialog, text=l.get("Delete link"), command=on_delete)
     delete_button.grid(row=4, column=3, sticky="w")
 
     primary_combo.bind("<<ComboboxSelected>>", select_primary_combo)

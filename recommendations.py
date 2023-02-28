@@ -1,7 +1,7 @@
 import sqlcplants
 from numpy import zeros, arange, insert
 
-def getRecommendationsList(itemIdList, type="positive"):
+def getRecommendationsList(l,itemIdList, type="positive"):
     # Gets a list of species names recommended for a itemIdList (ecosystem)
     matrix = sqlcplants.getLinkMatrix() # Get all links from db
     numnodos = sqlcplants.getmaxnode()
@@ -42,13 +42,13 @@ def getRecommendationsList(itemIdList, type="positive"):
     for elemento in cleanList:
         lista.append(int(elemento))
     if len(lista)>0:
-        nameList = sqlcplants.getNodeNamesFromIds(lista)
+        nameList = sqlcplants.getNodeNamesFromIds(l,lista)
     return nameList
 
-def getEcosystemCompanionsHash(itemIdList):
-    positiveList = getRecommendationsList(itemIdList, type="positive")
-    negativeList = getRecommendationsList(itemIdList, type="negative")
-    inList = sqlcplants.getNodeNamesFromIds(itemIdList)
+def getEcosystemCompanionsHash(l,itemIdList):
+    positiveList = getRecommendationsList(l,itemIdList, type="positive")
+    negativeList = getRecommendationsList(l,itemIdList, type="negative")
+    inList = sqlcplants.getNodeNamesFromIds(l,itemIdList)
     res = dict()
     for elem in positiveList:
         res[elem] = "positive"
